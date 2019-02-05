@@ -1,6 +1,10 @@
 # voicemanipulater
 
-Dependencies:
-parselmouth (from pypi)
-flask
-werkzeug.utils
+Dependencies:  
+
+parselmouth (from pypi)  
+
+flask  
+
+werkzeug.utils  
+
