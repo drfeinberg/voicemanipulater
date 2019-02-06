@@ -38,11 +38,11 @@ def manipulatePitchAndFormants(wav_file, gender, pitchFactor, formantFactor):
         F0min = 60
         F0max = 300
     pitch = call(sound, "To Pitch", 0.0, F0min, F0max)
-    medianF0 = call(pitch, "Get median", 0, 0, "Hertz")  # get medianpitch
+    medianF0 = call(pitch, "Get mean", 0, 0, "Hertz")  # get medianpitch
     pitch_median = medianF0 - pitchFactor
     if gender == "female":
         pitch = call(sound, "To Pitch", 0.0, 100, 500)
-        medianF0 = call(pitch, "Get median", 0, 0, "Hertz")  # get medianpitch
+        medianF0 = call(pitch, "Get mean", 0, 0, "Hertz")  # get medianpitch
         pitch_median = medianF0 - pitchFactor
         manipulated_sound = call(sound, "Change gender", 100, 500, formantFactor, pitch_median, 1, 1)
     elif gender == "male":
