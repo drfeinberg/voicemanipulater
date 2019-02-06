@@ -1,9 +1,10 @@
+
 import manipulate
 import measure
 
 import os
 
-from flask import Flask, flash, request, redirect, url_for
+from flask import Flask, flash, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 
 
@@ -15,17 +16,16 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
-@app.route('/static/<filename>')
+@app.route('/result/<filename>')
 def pitchManipulation(filename):
     fullpath = UPLOAD_FOLDER + '/' + filename
     newsound = manipulate.maniuplatePitch(wav_file = fullpath, gender="female", factor=-0.5, unit="ERB")
-    newsound.save("upload/newsound.wav", "WAV")
+    newsound.save("static/newsound.wav", "WAV")
     #playit = '<audio controls><source src=' + url_for('upload', filename='newsound.wav') + ' type="audio/wav"></audio>\n'
-    playit = '<audio controls><source src=newsound.wav type="audio/wav"></audio>\n'
+    playit = '<audio controls><source src=/static/newsound.wav type="audio/wav"></audio>\n'
     return playit
 
-
-@app.route('/upload/<filename>')
+@app.route('/display/<filename>')
 def uploaded_file(filename):
     fullpath = UPLOAD_FOLDER + '/' + filename
     (duration, meanF0, stdevF0, hnr, localJitter, localabsoluteJitter, rapJitter, ppq5Jitter, ddpJitter, localShimmer,
@@ -51,9 +51,9 @@ def uploaded_file(filename):
         f"F2: {f2_mean} </br>\n" \
         f"F3: {f3_mean} </br>\n" \
         f"F4: {f4_mean} </br>\n"
-    logo = '<img src=' + url_for('static', filename='logo.png') + '>'
+    #logo = '<img src=' + url_for('static', filename='logo.png') + '>'
     play = pitchManipulation(filename)
-    website = logo + '</br>' + play + '</br>' + stuff
+    website =  play + '</br>' + stuff
     return website
 
 
@@ -82,12 +82,10 @@ def upload_file():
                                     filename=filename))
     website = """<!doctype html>
     <title>Upload new File</title>
-    <img src='static/logo.png'>
     <h1>Upload new File</h1>
     <form method=post enctype=multipart/form-data>
       <input type=file name=file>
       <input type=submit value=Upload>
     </form>"""
     return website
-
 
