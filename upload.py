@@ -19,10 +19,13 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 @app.route('/result/<filename>')
 def pitchManipulation(filename):
     fullpath = UPLOAD_FOLDER + '/' + filename
-    newsound = manipulate.maniuplatePitch(wav_file = fullpath, gender="female", factor=-0.5, unit="ERB")
-    newsound.save("static/newsound.wav", "WAV")
-    #playit = '<audio controls><source src=' + url_for('upload', filename='newsound.wav') + ' type="audio/wav"></audio>\n'
-    playit = '<audio controls><source src=/static/newsound.wav type="audio/wav"></audio>\n'
+    newsound = manipulate.manipulatePitchAndFormants(wav_file = fullpath, gender="female", pitchFactor=-20, formantFactor=0.8)
+    name = filename[:-4]
+    newfilename = name + "_lowerPitch.wav"
+    newsavename = "/static/" + newfilename
+    newsavename2 = newsavename[1:]
+    newsound.save(newsavename2, "WAV")
+    playit = f'<audio controls><source src={newsavename} type="audio/wav"></audio>\n'
     return playit
 
 @app.route('/display/<filename>')
@@ -51,9 +54,9 @@ def uploaded_file(filename):
         f"F2: {f2_mean} </br>\n" \
         f"F3: {f3_mean} </br>\n" \
         f"F4: {f4_mean} </br>\n"
-    #logo = '<img src=' + url_for('static', filename='logo.png') + '>'
+    logo = '<img src=' + url_for('static', filename='logo.png') + '>'
     play = pitchManipulation(filename)
-    website =  play + '</br>' + stuff
+    website =  logo + '</br>' + play + '</br>' + stuff
     return website
 
 
@@ -82,6 +85,7 @@ def upload_file():
                                     filename=filename))
     website = """<!doctype html>
     <title>Upload new File</title>
+    <img src = static/logo.png>
     <h1>Upload new File</h1>
     <form method=post enctype=multipart/form-data>
       <input type=file name=file>
